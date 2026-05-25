@@ -6,3 +6,7 @@
 35  docker container run --publish 81:80 --detach nginx
    36  docker ps
    37  docker container run --publish 82:80 --detach nginx
+####docker images
+56  docker images
+   57  docker info
+
