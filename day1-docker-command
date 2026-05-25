@@ -2,3 +2,7 @@
      28  docker --version
    29  docker
    30  docker info
+#lets create our first container
+35  docker container run --publish 81:80 --detach nginx
+   36  docker ps
+   37  docker container run --publish 82:80 --detach nginx
