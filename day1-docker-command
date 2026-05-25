@@ -1,0 +1,4 @@
+###
+     28  docker --version
+   29  docker
+   30  docker info
