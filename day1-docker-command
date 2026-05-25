@@ -39,4 +39,23 @@
 #change this process id with your own process id
    84  kill -9 9044
    85  docker ps -a
+##docker networking
+#to check all the network
+102  docker network
+#we will create a custom network
+  105  docker network create my_network
+  106  docker network ls
+#if you want to know more about a custom network
+  107  docker network inspect my_network
+#we will create two container on the custom network
+  108  docker run -d --network=my_network --name new_nginx nginx
+  109  docker run -d --network=my_network --name old_nginx nginx
+  110  docker ps
+  111  docker network ls
+#if we inpect the custom network we will see both the contianer
+
+  113  docker network inspect my_network
+#lets send curl request from one container to another -it interactive terminal
+  116  docker exec -it new_nginx curl old_nginx
+  117  docker exec -it old_nginx curl new_nginx
 
