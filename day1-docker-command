@@ -58,4 +58,32 @@
 #lets send curl request from one container to another -it interactive terminal
   116  docker exec -it new_nginx curl old_nginx
   117  docker exec -it old_nginx curl new_nginx
+##docker volume
+  129  docker volume ls
+  130  docker volume
+#lets create a db container with persistent volume
+  145  docker run -d --name db -e MYSQL_ALLOW_EMPTY_PASSWORD=true -v db-volume:/var/lib/mysql mysql:8
+#this will show the custom volume which is created 
+  146  docker volume ls
+  153  docker volume inspect db-volume
+####this is the path the data stored in location
+  155  ls /var/lib/docker/volumes/db-volume/_data
+#####################################
+#lets login inside the db 
+  161  docker exec -it db bash
+#once you login 
+mysql -u root -p
+##just press enter you will get mysql prompt
+show databases;
+create database cisco;
+#this will show a cisco db is created 
+show databases;
+#lets come out 
+exit
+exit
+##look into the path you will see the cisco folder is created
+  162  ls /var/lib/docker/volumes/db-volume/_data
+
+
+
 
