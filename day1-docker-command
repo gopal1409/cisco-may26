@@ -9,4 +9,34 @@
 ####docker images
 56  docker images
    57  docker info
+#container vs process id
+
+
+   64  docker run -d -p 83:80 httpd
+#this will give you the container id 
+   65  docker ps
+##to stop the container change the id to your id 
+   66  docker stop 34
+#this will not show the previous conbtianer
+   67  docker ps
+#this will show all running and stopped container
+   68  docker ps -a
+#if you want to delete a container rm 
+   69  docker rm 34
+#this will show the container id 
+   70  docker ps -a
+   71  docker images
+#if you want to delet a image replace it with your image id
+   72  docker rmi 2a7deaaaf35
+#lets create a new container 
+
+   78  docker run -d -p 83:80 --name web nginx
+   79  docker ps
+#this container is running as procerss id 
+   81  docker top web
+   82  ps aux
+   83  docker top web
+#change this process id with your own process id
+   84  kill -9 9044
+   85  docker ps -a
 
