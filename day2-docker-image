@@ -57,7 +57,7 @@ WORKDIR /app
 COPY pom.xml .
 COPY src ./src
 #lets package the application into a jar file
-RUN mvn clean package -DskipTest
+RUN mvn clean package -DskipTests
 
 #---------------------
 #Stage2: create the fimal production image
