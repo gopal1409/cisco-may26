@@ -37,3 +37,45 @@ docker ps
 curl localhost:81/hello
 ###in the browser paste this urld now you are being served using container
 http://192.168.100.10:81/hello
+#if you want to see the layer history
+ 55  docker images
+#change the image id with your image id
+   57  docker image history 954c9e8b92d2
+##lets build the multibuild
+#we will take a backup of the old dockerfile
+60  mv dockerfile dockerfile-single
+#lets create a new dockerfile
+   62  vi dockerfile
+#inside this docker file copy from line 50 till line 72
+#-------------------------------------
+#stage1: build the application
+#------------------------------------
+FROM maven:3.9.16-eclipse-temurin-8-noble AS build
+#set the working directory inside the container
+#copying the maven project descripto and source file
+WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+#lets package the application into a jar file
+RUN mvn clean package -DskipTest
+
+#---------------------
+#Stage2: create the fimal production image
+#-------------------------------------
+FROM maven:3.9.16-eclipse-temurin-8-noble
+
+#set the working directory
+WORKDIR /app
+#from the build stage we are geeting the jar using copy command
+COPY --from=build /app/target/*.jar app.jar
+EXPOSE 8080
+ENTRYPOINT ["java","-jar","app.jar"]
+
+##lts do an build process 
+
+   65  docker build -t skyappmulti .
+###this will show the image
+   66  docker images
+docker image history skyappmulti
+
+
