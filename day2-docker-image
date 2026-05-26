@@ -15,3 +15,25 @@
      http://192.168.100.10:8080/hello
 ##you will see the test page
   ##go back to your terminal press ctrl c
+#lets convert this application into an container based image to do the same we will create a dockerfile
+33  vi dockerfile
+##inside the docker file copy paste from line 22 till 27
+#the first instruction will be we need to provide the base image to run my application
+FROM maven:3.9.16-eclipse-temurin-8-noble
+WORKDIR /app
+COPY ./target/spring-boot-2-hello-world-1.0.2-SNAPSHOT.jar /app/app.jar
+EXPOSE 8080
+RUN apt-get update
+ENTRYPOINT ["java","-jar","/app/app.jar"]
+
+   34  ls
+##this will show the docker file
+##we will use docker build command to build the image also -t in tag once the image is build this will be the name of the image
+   35  docker build -t skyapp .
+   36  docker images
+#if you can see your sky image lets spin up a container 
+   37  docker run -d -p 81:8080 skyapp
+docker ps 
+curl localhost:81/hello
+###in the browser paste this urld now you are being served using container
+http://192.168.100.10:81/hello
