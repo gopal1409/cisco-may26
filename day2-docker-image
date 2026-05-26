@@ -77,5 +77,19 @@ ENTRYPOINT ["java","-jar","app.jar"]
 ###this will show the image
    66  docker images
 docker image history skyappmulti
+#lets update the image we need to first update our code 
+   80  nano src/main/java/com/example/helloworld/controller/HelloWorldController.java
+##here in this file you will find "Hello, World" replace the same with "Hello, World! from multi build"
+#in the test file also we need to replace the string "Hello, World" replace the same with "Hello, World! from multi build"
+ nano src/test/java/com/example/helloworld/controller/HelloWorldControllerTest.java
+##whenever we make changes in the application we need to also rebuild the container image to reflect those changes
+ docker build -t skyappmulti:v1 .
+##now we will create a new container using the new changes 
+docker container run -d -p 84:8080 skyappmulti:v1
+##check the container with port number is created or not
+docker ps
+##lets do curl reqeust 
+curl localhost:84/hello
+####this will show the new message Hello, World! from multi build"
 
 
