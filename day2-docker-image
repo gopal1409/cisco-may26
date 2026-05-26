@@ -1,0 +1,17 @@
+#we are going to run an maven based application
+18  apt install default-jdk
+   19  apt install maven
+  ##clone the maven app
+   20  git clone https://github.com/gopal1409/spring-hello.git
+   21  cd spring-hello/
+     #mvn clean pacakge will create the hava jar file
+   22  mvn clean package
+   23  ls
+     #inside the target directory we have the jar file
+   24  ls target/
+     #lets execute the jar file
+   25  java -jar ./target/spring-boot-2-hello-world-1.0.2-SNAPSHOT.jar
+     ##open a browser and access the application using the below mentined url 
+     http://192.168.100.10:8080/hello
+##you will see the test page
+  ##go back to your terminal press ctrl c
