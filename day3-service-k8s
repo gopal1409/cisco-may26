@@ -1,0 +1,31 @@
+#lets create a deployment 
+
+   18  kubectl create deploy test-deploy --image=nginx --port=80 --replicas=2
+   19  kubectl get deploy
+   20  kubectl get pod
+#this will help you to expose your deployment
+   22  kubectl expose deploy --help
+  ##expose command will expose your pod 
+   23  kubectl expose deploy test-deploy --type=ClusterIP --name=test-clusterip
+  
+   24  kubectl get deploy
+   25  kubectl get svc
+  ##we will create an dnspod which has ns lookup utility
+   26  kubectl apply -f https://k8s.io/examples/admin/dns/dnsutils.yaml
+   27  kubectl get pod
+   28  kubectl exec -i -t dnsutils -- nslookup kubernetes.default
+   29  kubectl get pod
+   30  kubectl get svc
+#from the dns pod we will do an nslookup to the service which we have created earlier
+   33  kubectl exec -i -t dnsutils -- nslookup test-clusterip
+###lets expose the same pod using nodePort
+     37  kubectl expose deploy test-deploy --type=NodePort --name=test-nodeport
+     #check the port number 
+   38  kubectl get svc
+#describe svc will show the end point which is the ip address of your pod
+   40  kubectl describe svc test-nodeport
+     ##you can check the pod is matching
+   41  kubectl get pod -o wide
+     ###remember the node port number open a browser put the ip address of the node machine and colon port number you can see the test page
+   42  kubectl get svc
+
