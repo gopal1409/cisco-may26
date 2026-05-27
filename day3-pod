@@ -31,3 +31,16 @@ spec: #it is specification of the pod
     image: nginx:1.14.2 #image of the contianer
     ports:
     - containerPort: 80 #this is the port number which is used by the container to listen to the traffic
+#lets create another pod with dry run
+#this will show all the xommand you can execute using kubectl
+ 30  kubectl
+#we want to create a pod kubectl run --help will show the pod creating stepos
+   31  kubectl run --help
+#this will do a dry run and generate the yaml file
+   33  kubectl run my-first-pod --image=nginx --port 80 --dry-run=client -o yaml
+   34  kubectl run my-first-pod --image=nginx --port 80 --dry-run=client -o yaml > pod2.yml
+   35  cat pod2.yml
+#apply it
+   36  kubectl apply -f pod2.yml
+#wait for a minute till the pod come back
+   37  kubectl get pod
