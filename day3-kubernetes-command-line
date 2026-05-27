@@ -1,0 +1,14 @@
+##if you want to see the node status
+  #this will show all the nodes
+   22  kubectl get nodes
+  #if you want to know more about the node 
+   23  kubectl get nodes -o wide
+  ##if you want to see all the pods in k8s 
+   24  kubectl get pod -A
+   25  kubectl get pod -A -o wide
+  #as k8s is stop supporting docker
+  26  docker ps
+  #in place of docker ps you can use crictl 
+   27  crictl ps
+  #you can look into all the command supported by crictl
+   28  crictl
