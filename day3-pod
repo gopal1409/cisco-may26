@@ -44,3 +44,10 @@ spec: #it is specification of the pod
    36  kubectl apply -f pod2.yml
 #wait for a minute till the pod come back
    37  kubectl get pod
+##lets deploy our custom image you need to replace the name of the image to your image name which you will get from hub.docker.com
+ 44  kubectl run my-custom-pod --image=gopal1409/skyapp --port 8080 --dry-run=client -o yaml > myapp.yml
+   45  kubectl apply -f myapp.yml
+cat myapp.yml
+   46  kubectl get pod
+#look into the describe pod this will show your custom image
+   47  kubectl describe pod my-custom-pod
