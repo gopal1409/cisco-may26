@@ -51,3 +51,12 @@ cat myapp.yml
    46  kubectl get pod
 #look into the describe pod this will show your custom image
    47  kubectl describe pod my-custom-pod
+#lets delete all the pod 
+ 54  kubectl get pod
+   55  kubectl get nodes
+   56  kubectl delete pod nginx
+   57  kubectl get pod
+   58  kubectl delete pod my-first-pod
+   59  kubectl delete pod my-custom-pod
+   60  kubectl get pod
+
