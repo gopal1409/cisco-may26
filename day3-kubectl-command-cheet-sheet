@@ -1,0 +1,444 @@
+# Kubernetes Command-Line Reference Guide
+
+## Basic kubectl Commands
+
+### Cluster Information
+```bash
+kubectl cluster-info                          # Display cluster information
+kubectl version                               # Show client and server versions
+kubectl api-versions                          # List API versions
+kubectl api-resources                         # List all API resources
+kubectl config view                           # Display kubeconfig settings
+kubectl config get-contexts                   # List all contexts
+kubectl config current-context                # Show current context
+kubectl config use-context <context-name>    # Switch to a context
+```
+
+### Node Management
+```bash
+kubectl get nodes                             # List all nodes
+kubectl describe node <node-name>             # Get detailed node info
+kubectl top nodes                             # Show node resource usage
+kubectl cordon <node-name>                    # Mark node as unschedulable
+kubectl uncordon <node-name>                  # Mark node as schedulable
+kubectl drain <node-name>                     # Drain node for maintenance
+kubectl taint nodes <node-name> key=value:NoSchedule  # Add taint to node
+```
+
+### Namespace Management
+```bash
+kubectl get namespaces                        # List all namespaces
+kubectl create namespace <namespace-name>    # Create a namespace
+kubectl delete namespace <namespace-name>    # Delete a namespace
+kubectl describe namespace <namespace-name>  # Get namespace details
+kubectl config set-context --current --namespace=<ns>  # Set default namespace
+```
+
+## Pod Management
+
+### Viewing Pods
+```bash
+kubectl get pods                              # List pods in default namespace
+kubectl get pods -A                           # List pods in all namespaces
+kubectl get pods -n <namespace>               # List pods in specific namespace
+kubectl get pods -o wide                      # Show more pod details
+kubectl get pods -o yaml                      # Output in YAML format
+kubectl get pods -o json                      # Output in JSON format
+kubectl describe pod <pod-name>               # Get detailed pod info
+kubectl get pods --sort-by='.status.phase'   # Sort pods by phase
+kubectl get pods --selector=app=myapp        # Filter pods by labels
+```
+
+### Pod Operations
+```bash
+kubectl create -f <file.yaml>                 # Create pod from YAML
+kubectl apply -f <file.yaml>                  # Apply YAML (create/update)
+kubectl delete pod <pod-name>                 # Delete a pod
+kubectl delete pod <pod-name> --grace-period=0 --force  # Force delete pod
+kubectl logs <pod-name>                       # View pod logs
+kubectl logs <pod-name> -c <container>        # View specific container logs
+kubectl logs <pod-name> -f                    # Stream pod logs
+kubectl logs <pod-name> --previous            # View logs from crashed container
+kubectl exec -it <pod-name> -- /bin/bash     # Execute command in pod
+kubectl exec -it <pod-name> -c <container> -- /bin/sh  # Exec in specific container
+kubectl port-forward <pod-name> 8080:8080    # Forward local port to pod
+kubectl attach <pod-name> -i -t               # Attach to running pod
+kubectl cp <pod-name>:/path/file ./file      # Copy file from pod
+kubectl cp ./file <pod-name>:/path/file      # Copy file to pod
+```
+
+### Pod Scaling & Management
+```bash
+kubectl scale deployment <deployment> --replicas=3  # Scale deployment
+kubectl set image deployment/<dep> image=v2  # Update deployment image
+kubectl rollout status deployment/<name>     # Check rollout status
+kubectl rollout history deployment/<name>    # View rollout history
+kubectl rollout undo deployment/<name>       # Rollback to previous version
+kubectl rollout undo deployment/<name> --to-revision=2  # Rollback to specific version
+```
+
+## Deployment Management
+
+### Viewing Deployments
+```bash
+kubectl get deployments                       # List all deployments
+kubectl get deployments -A                    # List deployments in all namespaces
+kubectl describe deployment <deployment>     # Get deployment details
+kubectl get deployment <deployment> -o yaml  # Export deployment YAML
+```
+
+### Deployment Operations
+```bash
+kubectl create deployment <name> --image=<image>  # Create deployment
+kubectl apply -f <deployment.yaml>           # Apply deployment YAML
+kubectl delete deployment <deployment>       # Delete deployment
+kubectl edit deployment <deployment>         # Edit deployment in editor
+kubectl set image deployment/<dep> container=<image>  # Update image
+kubectl set resources deployment/<dep> --limits=cpu=500m,memory=512Mi  # Set resources
+kubectl autoscale deployment <dep> --min=1 --max=5 --cpu-percent=80  # Enable autoscaling
+kubectl delete deployment <dep> --cascade=orphan  # Delete without deleting pods
+```
+
+## Service Management
+
+### Viewing Services
+```bash
+kubectl get services                          # List all services
+kubectl get svc                               # Short form
+kubectl get svc -A                            # All services across namespaces
+kubectl describe service <service-name>      # Get service details
+kubectl get endpoints <service-name>         # View service endpoints
+```
+
+### Service Operations
+```bash
+kubectl expose pod <pod-name> --port=8080   # Create service from pod
+kubectl expose deployment <dep> --type=LoadBalancer --port=80 --target-port=8080
+kubectl create service clusterip <name> --tcp=5678:8080
+kubectl delete service <service-name>        # Delete service
+kubectl edit service <service-name>          # Edit service
+kubectl port-forward svc/<service> 8080:8080  # Port forward to service
+```
+
+## StatefulSet Management
+
+### Viewing StatefulSets
+```bash
+kubectl get statefulsets                      # List all StatefulSets
+kubectl describe statefulset <name>          # Get StatefulSet details
+```
+
+### StatefulSet Operations
+```bash
+kubectl create -f <statefulset.yaml>         # Create StatefulSet
+kubectl delete statefulset <name>            # Delete StatefulSet
+kubectl delete statefulset <name> --cascade=orphan  # Delete without deleting pods
+kubectl scale statefulset <name> --replicas=3  # Scale StatefulSet
+kubectl patch statefulset <name> -p '{"spec":{"replicas":2}}'  # Patch StatefulSet
+```
+
+## DaemonSet Management
+
+### Viewing DaemonSets
+```bash
+kubectl get daemonsets                        # List all DaemonSets
+kubectl describe daemonset <name>            # Get DaemonSet details
+```
+
+### DaemonSet Operations
+```bash
+kubectl create -f <daemonset.yaml>           # Create DaemonSet
+kubectl delete daemonset <name>              # Delete DaemonSet
+kubectl set image daemonset/<name> image=v2  # Update DaemonSet image
+```
+
+## Job & CronJob Management
+
+### Job Commands
+```bash
+kubectl get jobs                              # List all jobs
+kubectl describe job <job-name>              # Get job details
+kubectl logs job/<job-name>                  # View job logs
+kubectl delete job <job-name>                # Delete job
+kubectl delete job <job-name> --cascade=background
+kubectl wait --for=condition=complete job/<job-name>  # Wait for job completion
+```
+
+### CronJob Commands
+```bash
+kubectl get cronjobs                          # List all CronJobs
+kubectl describe cronjob <cronj-name>        # Get CronJob details
+kubectl delete cronjob <cronj-name>          # Delete CronJob
+kubectl create cronjob <name> --image=image --schedule="0 0 * * *" -- /bin/sh
+```
+
+## ConfigMap & Secret Management
+
+### ConfigMap Operations
+```bash
+kubectl get configmaps                        # List all ConfigMaps
+kubectl describe configmap <name>            # Get ConfigMap details
+kubectl create configmap <name> --from-literal=key=value
+kubectl create configmap <name> --from-file=<file>
+kubectl create configmap <name> --from-file=<directory>
+kubectl delete configmap <name>              # Delete ConfigMap
+kubectl edit configmap <name>                # Edit ConfigMap
+kubectl get configmap <name> -o yaml         # Export ConfigMap
+```
+
+### Secret Operations
+```bash
+kubectl get secrets                           # List all secrets
+kubectl describe secret <name>               # Get secret details
+kubectl create secret generic <name> --from-literal=key=value
+kubectl create secret generic <name> --from-file=<file>
+kubectl create secret docker-registry <name> --docker-server=<registry> --docker-username=<user> --docker-password=<pwd>
+kubectl delete secret <name>                 # Delete secret
+kubectl edit secret <name>                   # Edit secret
+kubectl get secret <name> -o yaml            # Export secret (base64 encoded)
+```
+
+## PersistentVolume & PersistentVolumeClaim
+
+### PV & PVC Commands
+```bash
+kubectl get pv                                # List all PersistentVolumes
+kubectl get pvc                               # List all PersistentVolumeClaims
+kubectl get pvc -A                            # All PVCs across namespaces
+kubectl describe pv <pv-name>                # Get PV details
+kubectl describe pvc <pvc-name>              # Get PVC details
+kubectl delete pv <pv-name>                  # Delete PV
+kubectl delete pvc <pvc-name>                # Delete PVC
+kubectl get pv --sort-by=.spec.capacity.storage  # Sort PVs by capacity
+```
+
+## Ingress Management
+
+### Ingress Commands
+```bash
+kubectl get ingress                           # List all Ingress resources
+kubectl get ingress -A                        # All Ingress resources
+kubectl describe ingress <ingress-name>      # Get Ingress details
+kubectl create -f <ingress.yaml>             # Create Ingress
+kubectl delete ingress <ingress-name>        # Delete Ingress
+kubectl edit ingress <ingress-name>          # Edit Ingress
+kubectl get ingress <name> -o yaml           # Export Ingress YAML
+```
+
+## Labels & Selectors
+
+### Label Operations
+```bash
+kubectl label pod <pod-name> app=myapp      # Add label to pod
+kubectl label pod <pod-name> app=myapp --overwrite  # Update label
+kubectl label pod <pod-name> app-            # Remove label
+kubectl label pods -l app=oldlabel app=newlabel  # Label multiple pods
+kubectl get pods --show-labels               # Show all labels
+kubectl get pods -L app,version              # Show specific labels as columns
+```
+
+### Selector Queries
+```bash
+kubectl get pods -l app=myapp                # Select by label
+kubectl get pods -l 'app in (app1, app2)'    # Select with IN operator
+kubectl get pods -l 'app,version!=1.0'       # Multiple selectors
+kubectl get pods -l '!app'                   # Select without label
+```
+
+## Resource Quotas & Limits
+
+### Resource Management
+```bash
+kubectl get resourcequota                    # List ResourceQuotas
+kubectl describe resourcequota <name>        # Get details
+kubectl create resourcequota <name> --hard=pods=10,cpu=20,memory=40Gi
+kubectl get limitrange                       # List LimitRanges
+kubectl describe limitrange <name>           # Get details
+kubectl top pods                              # Show pod resource usage
+kubectl top nodes                             # Show node resource usage
+```
+
+## RBAC (Role-Based Access Control)
+
+### RBAC Commands
+```bash
+kubectl get roles                             # List all roles
+kubectl get rolebindings                      # List all role bindings
+kubectl get clusterroles                      # List cluster roles
+kubectl get clusterrolebindings               # List cluster role bindings
+kubectl describe role <role-name>            # Get role details
+kubectl describe rolebinding <binding-name>  # Get role binding details
+kubectl create role <role> --verb=get,list --resource=pods  # Create role
+kubectl create rolebinding <binding> --role=<role> --serviceaccount=<sa>
+kubectl auth can-i get pods --as=system:serviceaccount:default:user1
+kubectl auth reconcile -f <rbac.yaml>        # Apply RBAC policies
+```
+
+## ServiceAccount Management
+
+### ServiceAccount Commands
+```bash
+kubectl get serviceaccounts                  # List all ServiceAccounts
+kubectl get sa                                # Short form
+kubectl describe serviceaccount <name>       # Get details
+kubectl create serviceaccount <name>         # Create ServiceAccount
+kubectl delete serviceaccount <name>         # Delete ServiceAccount
+kubectl get secrets -l type=kubernetes.io/service-account-token
+```
+
+## HorizontalPodAutoscaler
+
+### HPA Commands
+```bash
+kubectl get hpa                               # List all HPAs
+kubectl describe hpa <hpa-name>              # Get HPA details
+kubectl create hpa <name> --image=<image> --min-replicas=1 --max-replicas=5 --cpu-percent=80
+kubectl delete hpa <name>                    # Delete HPA
+kubectl edit hpa <name>                      # Edit HPA
+kubectl get hpa <name> -o yaml               # Export HPA
+```
+
+## Network Policy
+
+### NetworkPolicy Commands
+```bash
+kubectl get networkpolicies                  # List all NetworkPolicies
+kubectl describe networkpolicy <name>        # Get details
+kubectl create -f <networkpolicy.yaml>       # Create NetworkPolicy
+kubectl delete networkpolicy <name>          # Delete NetworkPolicy
+```
+
+## Debugging & Troubleshooting
+
+### Debug Commands
+```bash
+kubectl debug pod/<pod-name>                 # Debug a pod
+kubectl debug pod/<pod-name> --image=ubuntu  # Debug with custom image
+kubectl describe pod <pod-name>              # Detailed pod information
+kubectl get events -A                        # List all cluster events
+kubectl get events --sort-by='.lastTimestamp'  # Sort events by time
+kubectl describe node <node-name>            # Node diagnostics
+kubectl get nodes -o wide                    # Detailed node information
+kubectl logs <pod-name> --previous           # Logs from crashed container
+kubectl logs <pod-name> -c <container> -f    # Stream container logs
+kubectl exec -it <pod-name> -- /bin/bash     # Access pod shell
+kubectl top pod <pod-name>                   # Pod resource usage
+```
+
+### Cluster Diagnostics
+```bash
+kubectl cluster-info dump                    # Dump cluster info
+kubectl cluster-info dump --output-directory=<directory>  # Dump to directory
+kubectl get componentstatuses                # Check component health
+kubectl get all -A                           # Get all resources
+kubectl get all --all-namespaces             # Alternative syntax
+```
+
+## Apply & Diff
+
+### Apply Operations
+```bash
+kubectl apply -f <file.yaml>                 # Apply YAML
+kubectl apply -f <directory>                 # Apply all files in directory
+kubectl apply -f <url>                       # Apply from URL
+kubectl apply --dry-run=client -f <file.yaml>  # Dry run
+kubectl diff -f <file.yaml>                  # Show differences
+kubectl replace -f <file.yaml>               # Replace resource
+kubectl delete -f <file.yaml>                # Delete from file
+```
+
+## Patch & Edit
+
+### Patch Operations
+```bash
+kubectl patch pod <pod-name> -p '{"spec":{"activeDeadlineSeconds":300}}'
+kubectl patch pod <pod-name> --type merge -p '{"spec":{"activeDeadlineSeconds":300}}'
+kubectl patch pod <pod-name> --type strategic -p '{"spec":{"activeDeadlineSeconds":300}}'
+kubectl patch serviceaccount <sa> -p '{"imagePullSecrets": [{"name": "myregistry"}]}'
+```
+
+### Edit Commands
+```bash
+kubectl edit pod <pod-name>                  # Edit pod in default editor
+kubectl edit deployment <deployment>         # Edit deployment
+kubectl edit service <service>               # Edit service
+kubectl set env deployment/<dep> VAR=value   # Set environment variables
+kubectl set resources deployment/<dep> --limits=cpu=500m --requests=cpu=250m
+```
+
+## Kustomize Commands
+
+### Kustomize Operations
+```bash
+kubectl apply -k <directory>                 # Apply Kustomization
+kubectl kustomize <directory>                # View rendered output
+kubectl diff -k <directory>                  # Show differences
+kubectl delete -k <directory>                # Delete from Kustomization
+```
+
+## Useful Flags & Options
+
+### Common Flags
+```bash
+-n, --namespace=<namespace>                  # Specify namespace
+-A, --all-namespaces                         # All namespaces
+-o, --output=<format>                        # Output format (yaml, json, wide, custom-columns)
+-l, --selector=<label-selector>              # Filter by labels
+--field-selector=<field-selector>            # Filter by fields
+-w, --watch                                  # Watch for changes
+--sort-by=<field>                            # Sort results
+--dry-run=<mode>                             # Dry run (client or server)
+-f, --filename=<file>                        # File path
+-R, --recursive                              # Recursive
+--context=<context>                          # Specify context
+-v, --v=<level>                              # Verbosity level
+--all                                        # All resources
+--cascade=<mode>                             # Delete cascade (background, foreground, orphan)
+```
+
+## Complete Examples
+
+### Example 1: Create and Expose Deployment
+```bash
+kubectl create deployment nginx --image=nginx:latest
+kubectl expose deployment nginx --type=LoadBalancer --port=80 --target-port=8080
+kubectl get svc nginx
+```
+
+### Example 2: Scale and Update
+```bash
+kubectl scale deployment nginx --replicas=5
+kubectl set image deployment/nginx nginx=nginx:1.19 --record
+kubectl rollout status deployment/nginx
+```
+
+### Example 3: Check Resource Usage
+```bash
+kubectl top nodes
+kubectl top pods -A
+kubectl describe node <node-name>
+```
+
+### Example 4: Debug Pod
+```bash
+kubectl describe pod <pod-name>
+kubectl logs <pod-name>
+kubectl exec -it <pod-name> -- /bin/bash
+```
+
+### Example 5: Create ConfigMap & Use in Pod
+```bash
+kubectl create configmap app-config --from-literal=app.env=production
+kubectl set env deployment/myapp --from=configmap/app-config
+```
+
+## Advanced Tips
+
+- Use `kubectl explain <resource>` to get API documentation
+- Use `--dry-run=client` to preview changes before applying
+- Use `--watch` flag to monitor resources in real-time
+- Use `-o custom-columns` for custom output formatting
+- Use `kubectl api-resources` to see all available resources
+- Use context switching for multi-cluster management
+- Use labels and selectors for flexible resource queries
+- Use namespaces to organize and isolate workloads
