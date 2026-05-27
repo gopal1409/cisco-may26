@@ -45,5 +45,14 @@ spec:
    96  ls
    97  kubectl apply -f dep.yml
    98  kubectl get deploy
+#the pod created using deployment is combination of three things 
+1. deploymentname+uniquehash value from rs+unique pod id you can verify the same
+ 101  kubectl get deploy
+  102  kubectl get rs
+  103  kubectl get pod
+####so if you want to do clean 
+107  kubectl delete deploy nginx-deployment
+  108  kubectl get pod
+
     
 
