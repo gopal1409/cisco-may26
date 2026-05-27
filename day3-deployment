@@ -1,0 +1,49 @@
+#lets create our first deployment 
+63  vi deployment.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+
+   64  kubectl apply -f dep.yml
+   65  kubectl get deploy
+   66  kubectl get pod
+          #change the pod id with your own pod id
+   67  kubectl delete pod nginx-deployment-647677fc66-7k799
+          #once delete kubectl get pod will show another pod is created
+   68  kubectl get pod
+          #if you want to see where is the pod running 
+   69  kubectl get pod -o wide
+##there is an command line option avaiable to create your deployment
+           86  kubectl create
+   87  kubectl create --help
+   88  kubectl create deployment
+   89  kubectl create deployment --help
+   90  kubectl create deployment my-first-deployment --image=nginx --port=80 --replicas=2 --dry-run=client -o yaml
+   91  kubectl create deployment my-first-deployment --image=nginx --port=80 --replicas=2 --dry-run=client -o yaml > dep.yml
+   92  kubectl apply -f dep.yml
+   93  rm dep.yml
+   94  cd /root
+   95  kubectl create deployment my-first-deployment --image=nginx --port=80 --replicas=2 --dry-run=client -o yaml > dep.yml
+   96  ls
+   97  kubectl apply -f dep.yml
+   98  kubectl get deploy
+    
+
