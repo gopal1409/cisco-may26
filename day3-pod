@@ -16,3 +16,18 @@ spec:
    22  kubectl get pod
       ####describe pod check the event log of the pod
    23  kubectl describe pod nginx
+#pod defination
+#once we got the manifest file 
+##to apply this manifest file we use kubectl apply -f nameoftheyaml file
+##kubernetes read from top to bootom and left to rigt
+#we are going to create an object inside your k8s cluster
+apiVersion: v1 #the api version of the pod is v1
+kind: Pod #the kind of the object is pod
+metadata: #
+  name: nginx #just give a naming convention to the pod
+spec: #it is specification of the pod 
+  containers: #we are creating a container inside the pod
+  - name: nginx #this is the name of the contianer
+    image: nginx:1.14.2 #image of the contianer
+    ports:
+    - containerPort: 80 #this is the port number which is used by the container to listen to the traffic
