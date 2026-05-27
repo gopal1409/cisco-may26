@@ -1,0 +1,18 @@
+#lets crete our first pod 
+   20  vi pod.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+  - name: nginx
+    image: nginx:1.14.2
+    ports:
+    - containerPort: 80
+##apply the file
+   21  kubectl apply -f pod.yml
+      ##wait for a minute till the pod show 1/1
+   22  kubectl get pod
+      ####describe pod check the event log of the pod
+   23  kubectl describe pod nginx
