@@ -12,3 +12,7 @@
    27  crictl ps
   #you can look into all the command supported by crictl
    28  crictl
+##if you want to know more about a node
+ 16  kubectl get nodes
+   17  kubectl describe node eoc-controller
+
