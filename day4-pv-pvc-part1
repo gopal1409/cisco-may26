@@ -1,0 +1,42 @@
+##we will create an storage in one of the node. 
+#  select the eoc-node1 create the directory
+     17  mkdir /mnt/data
+   18  ls /mnt/data
+##once you create the directory rest of the activity we will do it in master node
+  #lets create our persistent volume
+  vi pv.yml
+  #inside pv.yml add this code
+apiVersion: v1
+kind: PersistentVolume
+metadata: 
+    name: task-pv-volume
+spec:
+    capacity:
+        storage: 10Gi #this is the storage capacity of the persistent volume
+    accessModes:
+        - ReadWriteOnce #read #readwritemany
+    volumeMode: Filesystem
+    storageClassName: manual 
+    hostPath:
+      path: "/mnt/data" #this is the path where the data will be stored in the host machine
+  #lets create pvc
+        vi pvc.yml
+  #####################
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: task-pv-claim
+spec:
+  resources:
+    requests:
+      storage: 10
+  volumeMode: Filesystem
+  storageClassName: manual #if you want to map your volume with a specific storage class, you can specify it here. If you want to use the default storage class, you can omit this field. volume name you can use storageclass name
+  accessModes:
+    - ReadWriteOnce
+ ###now if you check pv it is showing bind with your pvc
+   29  kubectl get pv
+   30  kubectl apply -f pvc.yml
+     ###now if you check pv it is showing bind with your pvc
+   31  kubectl get pv
+   32  kubectl get pvc
