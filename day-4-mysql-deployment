@@ -1,0 +1,80 @@
+##first i need to label the eoc-node1
+     53  kubectl get nodes
+   54  kubectl get nodes --show-labels
+   55  kubectl label node eoc-node1 disktype=mysqlssd
+   56  kubectl get nodes --show-labels
+###we need to ensure that the pod run in node1
+    66  vi mysql.yml
+  apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mmysql-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec: #this is the specification of the pod, where we define the containers and their configurations
+      nodeSelector:
+        disktype: mysqlssd #the label should match with the label of the node where you want to deploy your pod
+      containers:
+      - name: mysql
+        image: mysql:5.6
+        env:
+        - name: MYSQL_ROOT_PASSWORD #this is the environment variable that will be used to set the root password for mysql, you can use any name for the environment variable, but it should be the same as the one used in the mysql configuration file
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: mysecret
+        
+        ports:
+        - containerPort: 3306
+        volumeMounts: # this will help us to attach the persistent volume to the container, so that we can store the data in the persistent volume and it will be available even if the pod is deleted or recreated
+        - name: mysql-storage #this is inside your container
+          mountPath: /var/lib/mysql #this is the path where mysql will store its data, you can change it to any path you want, but it should be the same as the one used in the mysql configuration file
+        - name: mysql-config #this is the name of the config map that we will create later, it should match with the name of the config map
+          mountPath: /docker-entrypoint-initdb.d #this is the path where mysql will look for its configuration files, you can change it to any path you want, but it should be the same as the one used in the mysql configuration file 
+
+      volumes: # this will help us to define the persistent volume that we want to use for our mysql deployment, we can use either a persistent volume claim or a host path, in this case we are using a persistent volume claim
+      - name: mysql-storage #naming shoudl match
+        persistentVolumeClaim:
+          claimName: task-pv-claim
+      - name: mysql-config #naming should match
+        configMap:
+          name: user-config
+##once you apply wait for few minute before the pod comes up
+   67  kubectl apply -f mysql.yml
+   68  kubectl get pod
+            #####check the deployment
+   69  kubectl get deploy
+            ##describe the depoloyment
+            #when you desribe you need to see the event logs
+            1. it is attached the secret 
+            2. it is attaching the pvc 
+            3. it is attaching the confimap
+   70  kubectl describe deploy mmysql-deployment
+   71  kubectl get pod -o wide
+#once you got the pod we need to login and verify the secret and configmap 
+             kubectl exec -it mmysql-deployment-7784db7f84-8tmzt -- /bin/bash
+            ##once login we need to run our prompt of mysql 
+             mysql -u root -p
+            ##it will ask for the password put dbpassword101
+             show databases;
+##it will show the usermgmt database;
+            exit
+            exit
+            ##lets check in eoc-node1 there should be a folder inside /mnt/data usermgmt
+            ls /mnt/data
+            #then go back to controller node
+            ####exercise
+            1. login to the pod
+            2. use mysql to login to mysql
+            3. create database employee;
+            exit
+            exit
+            #check the db is creted on node1 folder or not 
+            ls /mnt/data
