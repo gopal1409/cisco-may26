@@ -55,7 +55,7 @@ spec:
   113  kubectl describe ns dev
           #######lets create another pod 
           vi p2.yml
-          apiVersion: v1
+apiVersion: v1
 kind: Pod
 metadata:
   name: p2
