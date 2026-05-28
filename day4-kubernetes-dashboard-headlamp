@@ -1,0 +1,24 @@
+####this will install the headlamp project inside your k8s cluister
+141  kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/headlamp/main/kubernetes-headlamp.yaml
+#as it is deployed in kube-system namespace
+#it will take another 5 min to do the deployment once completed
+  146  kubectl get pod -A
+#if you see the service it is showing cluster ip for headlamp
+
+  149  kubectl get svc -A
+  #lets change the same to nodeport
+  150  kubectl -n kube-system edit svc headlamp
+  #it will open in vi editor 
+  #if you go to extreme third last line it is showing CLUsterIp change it to NodePort
+   33   type: NodePort
+#save the file press Esc :wq
+  ##get svc will give you the port number so change the port number to your port number
+    151  kubectl get svc -A
+  #paste this url in the browser and change the port number to your port number
+  http://192.168.100.11:31563/ 
+  151  kubectl get svc -A
+  #once you open the site it will ask for token you can generate the token
+  152  kubectl -n kube-system create serviceaccount headlamp-admin
+  153  kubectl create clusterrolebinding headlamp-admin --serviceaccount=kube-system:headlamp-admin --clusterrole=cluster-admin
+  #once you got the token paste it and login 
+  154  kubectl create token headlamp-admin -n kube-system
