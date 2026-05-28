@@ -1,0 +1,76 @@
+##to check all the namespace
+   95  kubectl get ns
+   96  kubectl get pod -A
+###lets create a custom namespace
+     99  kubectl create ns dev
+  #describe will show there is no quota in ns
+  100  kubectl describe ns dev
+  101  kubectl get ns
+  ############lets create quota in namespace
+    103  vi quota.yml
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: quota-for-dev
+  namespace: dev
+spec:
+  hard:
+    pods: "10" #this is the maximum number of pods that can be created in the namespace
+    requests.cpu: "1" #this is the maximum amount of cpu that can be requested by the pods in the namespace
+    requests.memory: 1Gi #this is the maximum amount of memory that can be requested by the pods in the namespace
+    limits.cpu: "2" #this is the maximum amount of cpu that can be limited by the pods in the namespace
+    limits.memory: 2Gi #this is the maximum amount of memory that can be limited by the pods in the namespace
+    #requests memomry it means that if i create a pod with container inside it 
+    ###this give the gurantee that allocated memory will be available for the container to run and if the container is not able to get the requested memory then
+  104  kubectl apply -f quota.yml
+      #this will not show the quota as it is looking into default namespace
+  105  kubectl get resourcequota
+      #when we use -n with the namespace it will show
+  106  kubectl -n dev get resourcequota
+  107  kubectl -n dev describe resourcequota
+
+      #lets create a pod with resource quota
+       109  vi p1.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: p1
+  namespace: dev
+spec:
+  containers:
+  - name: myapp
+    image: nginx
+    resources:
+      limits:
+        memory: "800Mi"
+        cpu: "800m"
+      requests:
+        memory: "600Mi"
+        cpu: "400m"
+   
+  110  kubectl apply -f p1.yml
+          #this will show the pod running in a dev namespace and using the resources
+  111  kubectl -n dev get pod
+#this will show how much resource is utilzied in the dev namespace
+  113  kubectl describe ns dev
+          #######lets create another pod 
+          vi p2.yml
+          apiVersion: v1
+kind: Pod
+metadata:
+  name: p2
+  namespace: dev
+spec:
+  containers:
+  - name: myapp
+    image: nginx
+    resources:
+      limits:
+        memory: "1Gi"
+        cpu: "800m"
+      requests:
+        memory: "700Mi"
+        cpu: "400m"
+   ###apply the p2.yml file 
+          kubectl apply p2.yml
+
