@@ -29,7 +29,7 @@ metadata:
 spec:
   resources:
     requests:
-      storage: 10
+      storage: 10Gi
   volumeMode: Filesystem
   storageClassName: manual #if you want to map your volume with a specific storage class, you can specify it here. If you want to use the default storage class, you can omit this field. volume name you can use storageclass name
   accessModes:
