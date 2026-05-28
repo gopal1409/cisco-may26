@@ -1,0 +1,25 @@
+#lets create a service account called as jane and a namespace called as project-hamster
+    117  kubectl create namespace project-hamster
+  118  kubectl get namespace
+  119  kubectl create sa jane
+  120  kubectl get sa jane
+
+  ####between the namespace and service account we didint build any relationship
+
+  124  kubectl create role --help
+  #we are creating a role called as devrole which contains a verb called as create what we can create with this role like secret and configmap in project-hamster
+
+  126  kubectl -n project-hamster create role devrole --verb=create --resource=secret --resource=configmap
+
+  ##lets bind the role
+    131  kubectl -n project-hamster create rolebinding --help
+  #while binding the role we define the role which contains the permission plus we are attaching the service account with a particular name space and the name of the service account jane 
+  132  kubectl -n project-hamster create rolebinding devrolebinding --role=devrole --serviceaccount project-hamster:jane
+  #lets test it 
+  135  kubectl -n project-hamster auth can-i create secret --as system:serviceaccount:project-hamster:jane
+  136  kubectl -n project-hamster auth can-i create configmap --as system:serviceaccount:project-hamster:jane
+  137  kubectl -n project-hamster auth can-i create pod --as system:serviceaccount:project-hamster:jane
+  138  kubectl -n project-hamster auth can-i create deployment --as system:serviceaccount:project-hamster:jane
+  139  kubectl -n project-hamster auth can-i delete deployment --as system:serviceaccount:project-hamster:jane
+
+
