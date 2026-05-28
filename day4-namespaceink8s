@@ -72,5 +72,5 @@ spec:
         memory: "700Mi"
         cpu: "400m"
    ###apply the p2.yml file 
-          kubectl apply p2.yml
+          kubectl apply -f p2.yml
 
