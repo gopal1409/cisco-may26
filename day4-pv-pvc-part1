@@ -21,6 +21,7 @@ spec:
       path: "/mnt/data" #this is the path where the data will be stored in the host machine
   #lets create pvc
         vi pvc.yml
+#kubectl apply -f pv.yml
   #####################
 apiVersion: v1
 kind: PersistentVolumeClaim
