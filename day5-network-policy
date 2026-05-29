@@ -1,0 +1,15 @@
+#lets create a namespace inside the name space we will create two pod and check the communication between those pod
+ 24  kubectl create namespace ecom
+
+    25  kubectl get ns
+  #we will crete two pods inside the namespace
+   26  kubectl -n ecom run frontend --image=nginx
+   27  kubectl -n ecom run backend --image=nginx
+   28  kubectl -n ecom get pod
+  #expose the pod 
+   29  kubectl -n ecom expose pod frontend --port 80
+   30  kubectl -n ecom expose pod backend --port 80
+   31  kubectl -n ecom get pod,svc
+#lets check that pod to pod communication is working or not using curl request from one pod to another pod
+   33  kubectl -n ecom exec frontend -- curl backend
+   34  kubectl -n ecom exec backend -- curl frontend
