@@ -1,0 +1,28 @@
+#the first thing we need to drain the worker node
+  #we need to do it from master node only because the api server is running on master node
+   157  kubectl get nodes
+#lets drain the node this will evict the pod running in this node
+  161  kubectl drain eoc-node1 --ignore-daemonsets --delete-emptydir-data --force
+  #the below command will show that the node is in disable state 
+  162  kubectl get nodes
+  163  kubectl get pod -o wide
+
+  #now we need to login inside eoc-node1
+    16  apt-get update
+   17  apt-cache madison kubeadm
+   18  apt-mark hold kubeadm
+   19  apt-get install kubeadm=1.33.12-1.1
+   20  apt-get install kubectl=1.33.12-1.1
+   21  apt-get install kubelet=1.33.12-1.1
+   22  apt-mark hold kubeadm
+     24  systemctl restart containerd
+   25  systemctl restart kubelet
+
+
+
+  ##go back to the controller node eoc-controller
+   168  kubeadm upgrade node
+
+ 169  kubectl get nodes -o wide
+  170  kubectl uncordon eoc-node1
+  171  kubectl get nodes -o wide
