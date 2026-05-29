@@ -66,5 +66,40 @@ spec:
    50  kubectl -n ecom describe networkpolicy frontend-policy
 ##lets try to do the connection 
 kubectl -n ecom exec frontend -- curl backend
+##lets create a policy where backend need to accept the connection from frontend 
+ 56  vi backend.yml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: backend-policy
+  namespace: ecom
+spec:
+  podSelector:
+    matchLabels: #here we need to define label in key value format 
+      run: backend
+  policyTypes:
+  
+  - Ingress
+
+  ingress:
+  - from: #backend want to accept traffic from frontend
+    - podSelector:
+        matchLabels:
+          run: frontend
+
+   57  kubectl apply -f backend.yml
+   #check all the policu
+   59  kubectl -n ecom get networkpolicy
+#this will show the policy from 
+
+   62  kubectl -n ecom describe networkpolicy backend-policy
+ #lets try to do curl request to backend it should work
+   64  kubectl -n ecom exec frontend -- curl backend
+#press ctrl c if it is not responding
+##get the ip address of the backend 
+   65  kubectl -n ecom get pod -o wide
+##replace the below mentioned ip with your ip 
+#it should work
+   66  kubectl -n ecom exec frontend -- curl 10.10.228.134
 
 
