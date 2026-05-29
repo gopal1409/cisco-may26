@@ -1,0 +1,19 @@
+#to interact with etcd we need to install a utility called as etcd-client
+  apt install etcd-client
+  #once you install the command line to interact with etcdctl will be there
+  etcdctl
+  ##all the communication to your k8s cluster happen using api request 
+  1. ca certificate
+  2. certfile
+  3. keyfile
+  ###now from where i will get this file when you install kubernetes it is stored inside a directory 
+   181  ls /etc/kubernetes/manifests/
+  #to create a backup of etcd you need to get information about ca certs cert key
+  182  cat /etc/kubernetes/manifests/kube-apiserver.yaml | grep etcd
+ 
+  185  ETCDCTL_API=3 etcdctl --endpoints=https://127.0.0.1:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/apiserver-etcd-client.crt --key=/etc/kubernetes/pki/apiserver-etcd-client.key snapshot save /tmp/etcd-backup.db
+  #once you take the backup 
+  186  ls /tmp/etcd-backup.db
+  #now we will create a pod after we take the backup if i restore the backup this pod should go away
+  187  kubectl run testpod --image=nginx
+  188  kubectl get pod
