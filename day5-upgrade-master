@@ -1,0 +1,38 @@
+#lets upgrade the master node
+  74  kubectl get nodes -o wide
+   75  apt-get update
+  #this will show me what is the latest upgrade available 
+   76  apt-cache madison kubeadm
+  #we need to first drain the node so that while upgrading no one should create any object using master node
+  #lets drain the nodes first 
+   97  kubectl drain eoc-controller --ignore-daemonsets --delete-emptydir-data
+  #now the nodes is showing scheduling disabled
+   98  kubectl get nodes
+  ########################################
+  #kill the api server 
+102  killall -s SIGTERM kube-apiserver
+  103  sleep 20
+  104  sudo apt-mark unhold kubeadm
+  ###########lets upgrade the kubeadm and kubectl and kubelet package
+   144  apt-get install kubeadm=1.33.12-1.1
+  145  apt-get install kubectl=1.33.12-1.1 kubelet=1.33.12-1.1
+ 146  apt-mark hold kubeadm
+  #donwload the required images
+  147  kubeadm config images pull
+  #this will show the upgrade plan
+    148  sudo kubeadm upgrade plan
+  ###########################
+  kubeadm upgrade apply v1.33.12
+  ###it will take minum 5 minutes to complete the upgrade 
+  kubectl get nodes
+  ##now also you will see the older version
+  systemctl restart containerd
+  systemctl restart kubelet
+  ##now if you check 
+  kubectl get nodes
+  ###lets uncordon the master node 
+  kubectl uncordon eoc-controller
+  ##now check scheduling is disabled or not
+  kubectl get nodes
+
+
