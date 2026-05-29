@@ -13,3 +13,26 @@
 #lets check that pod to pod communication is working or not using curl request from one pod to another pod
    33  kubectl -n ecom exec frontend -- curl backend
    34  kubectl -n ecom exec backend -- curl frontend
+#lets create an default deny policy
+ 36  vi default-deny.yml
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+  namespace: ecom 
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+
+   37  kubectl apply -f default-deny.yml
+
+   39  kubectl -n ecom get networkpolicy
+#if you describe the policy you will see that ingress and egress routing is disables
+   40  kubectl -n ecom describe networkpolicy default-deny-ingress
+#press ctrl c to come out of the exec or wait
+   41  kubectl -n ecom exec frontend -- curl backend
+   42  kubectl -n ecom exec backend -- curl frontend
+
