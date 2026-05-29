@@ -35,4 +35,36 @@ spec:
 #press ctrl c to come out of the exec or wait
    41  kubectl -n ecom exec frontend -- curl backend
    42  kubectl -n ecom exec backend -- curl frontend
+#we will create our first exception where frontend can intiate traffic to backend using egress routing not only that using the label of the pod 
+#first check the label of all your pods
+45  kubectl -n ecom get pod --show-labels
+#then we will create the exception where frontend can do egress routing to backen
+   46  vi frontend.yml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: frontend-policy
+  namespace: ecom
+spec:
+  podSelector:
+    matchLabels: #here we need to define label in key value format 
+      run: frontend
+  policyTypes:
+  
+  - Egress
+
+  egress:
+  - to: #frontend want to intiate the traffic to backend
+    - podSelector:
+        matchLabels:
+          run: backend
+    
+   47  kubectl apply -f frontend.yml
+ 
+   49  kubectl -n ecom get networkpolicy
+#if you describe this policy it will show 
+   50  kubectl -n ecom describe networkpolicy frontend-policy
+##lets try to do the connection 
+kubectl -n ecom exec frontend -- curl backend
+
 
