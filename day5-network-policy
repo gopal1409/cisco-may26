@@ -102,4 +102,30 @@ spec:
 #it should work
    66  kubectl -n ecom exec frontend -- curl 10.10.228.134
 
+###lets enable dns service port 53 in the default deny policy first delete every thing and paste this policy 
+
+ 69  vi default-deny.yml
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+  namespace: ecom 
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+  egress:
+  - to:
+    ports:
+    - protocol: TCP
+      port: 53
+    - protocol: UDP
+      port: 53
+      #all the pod inside the ecom namespace will respond to dns query 
+
+   70  kubectl apply -f default-deny.yml
+   71  kubectl -n ecom describe networkpolicy default-deny-ingress
+#now lets test frontend can send the traffic to backend 
 
